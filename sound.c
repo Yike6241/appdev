@@ -12,6 +12,18 @@ void showID(char *idname, char *id){
 	puts("");
 }
 
+//this function is only called by displayWAVDATA() , no need to put 
+//a declaration in soud.h. Thefunction finds how many peaks from 80-pieces
+//of decinbel values
+int findPeaks(int d[]){
+	int c = 0, i;
+	for(i; i<80; i++){
+		if(d[i] >= 75 && d[i-1] <= 75) c++;
+	}
+	if(d[0] >= 75) c++;
+	return c;
+}
+
 //this function gets one second of samples (16000), and calculate 
 //80 pieces of decibel value, we know we need to calculalte one decibel
 //value from 200 samples, decibel value is calculated by RMS formula
@@ -35,8 +47,13 @@ void displayWAVDATA(short s[]){
 	}
 #ifndef DEBUG
 	barChart(dB);
+	int peak = findPeaks(dB);
+	setColors(WHITE, bg(BLACK));
+	printf("\033[1;61H");
+	printf("Peaks: %d         \n", peak);
 #endif
 }
+
 
 void displayWAVHDR(struct WAVHDR h){
 #ifdef DEBUG
