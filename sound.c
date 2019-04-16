@@ -1,20 +1,78 @@
 
 #include <stdio.h>
-#include <math.h>
 #include "sound.h"
+#include <math.h>
 #include "screen.h"
 
-void showID(char *idname, char *id){
+void fillID(char *d, const char *s)
+{
+	for(int i=0; i<4; i++)
+		*d++= *s++;
+}
+
+void testTone(int c, int fl, int fr, float d)
+{
+	if(c<1 || c>2){
+			printf("Worng number of channels.\n");
+			return;
+		}
+	if(fl<50 || fl>60000){
+			printf("Prequency is out of reach.\n");
+			return;
+		}
+	if(d<1.0 || d>10.0){
+			printf("wrong duration!\n");
+			return;
+		}
+
+		//all the argument are ok, the rest of code is to 
+		//1.make a correct wave header 2.generate correct samples
+		//3.write both header snd samples to a file
+
+	struct WAVHDR h;
+	int samples = 44100*d;
+	fillID(h.ChunkID, "RIFF");
+	fillID(h.Format, "WAVE");
+	fillID(h.Subchunk1ID, "fmt ");
+	fillID(h.Subchunk2ID, "data");
+	h.Subchunk1Size = 16;
+	h.Audio = 1;
+	h.SampleRate = 44100;
+	h.BitsPerSample = 16;
+	h.BlockAlign = c*16/8;
+	h.NumChannels = c;
+	h.ByteRate = 44100*c*16/8;
+	h.Subchunk2Size = samples*c*16/8;
+	h.ChunkSize = h.Subchunk2Size + 36;
+	FILE *fp = fopen("testTone.wav", "w");
+
+	if(fp == NULL){
+		printf("Cannot open a file\n");
+		return;
+	}
+
+	fwrite(&h, sizeof(h), 1, fp);
+		for(int i=0; i<samples; i++){
+		short sL =32767.0 * sin(2*PI*fl*i/44100);
+		fwrite(&sL, sizeof(short), 1, fp);
+	if(c==2){
+			short sR = 32767.0 * sin(2*PI*fr*i/44100);
+			fwrite(&sR, sizeof(short), 1, fp);
+			}
+
+		}
+		fclose(fp);
+		printf("TestTone is generated.\n");
+}
+
+void showID(char *idname, char *id ){
 	int i;
 	printf("%s : ", idname);
-	for(i=0; i<4; i++)
-		printf("%c", id[i]);
+	for(i=0; i<4; i++) printf("%c", id[i]);
 	puts("");
 }
 
-//this function is only called by displayWAVDATA() , no need to put 
-//a declaration in soud.h. Thefunction finds how many peaks from 80-pieces
-//of decinbel values
+
 int findPeaks(int d[]){
 	int c = 0, i;
 	for(i; i<80; i++){

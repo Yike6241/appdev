@@ -1,5 +1,5 @@
 //constant definitions
-#define URL "https://www.cc.puv.fi/~e1800944/sound.php"
+#define URL "http://www.cc.puv.fi/~e1800944/sound.php"
 
 // function declarations
-void sendDATA(short[]);
+void sendDATA(short d[]);

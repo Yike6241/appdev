@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <signal.h>
 #include "screen.h"
 #include "sound.h"
 #include "comm.h"
 
 int main(int argc, char **argv){
-	if(argc>1){
+	if(argc>1){		//if the user has qiven some commed line argument
 		printf("Test tone generater\n");
 		int fR, fL, ch;
 		float duration;
@@ -17,7 +18,7 @@ int main(int argc, char **argv){
 			scanf("%d", &fL);
 		}
 		else if(ch == 2){
-			pritf("Give me Left and Right freq: ");
+			printf("Give me Left and Right freq: ");
 			scanf("%d %d", &fL, &fR);
 		}
 		else{
